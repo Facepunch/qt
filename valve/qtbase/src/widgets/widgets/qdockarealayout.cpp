@@ -1037,7 +1037,32 @@ QLayoutItem *QDockAreaLayoutInfo::plug(const QList<int> &path)
     Q_ASSERT(item.widgetItem != nullptr);
     Q_ASSERT(item.flags & QDockAreaLayoutItem::GapItem);
     item.flags &= ~QDockAreaLayoutItem::GapItem;
-    return item.widgetItem;
+
+    //
+    // garry: if we dropped onto a tabbed area, that's cool - just carry on
+    //
+    if ( tabbed )
+        return item.widgetItem;
+
+    //
+    // If we dropped somewhere that isn't a tabbed area, we want to make a new layout
+    // info to enable tabs for it. We want tabs even if there's only one tab.
+    //
+
+    auto widgetItem = item.widgetItem;
+    QDockAreaLayoutInfo *new_info = new QDockAreaLayoutInfo(sep, dockPos, o, tabBarShape, mainWindow);
+    new_info->item_list.append(QDockAreaLayoutItem(widgetItem));
+
+    item.widgetItem = nullptr;
+    item.subinfo = new_info;
+
+    new_info->tabbed = true;
+    new_info->updateTabBar();
+    new_info->setCurrentTab( widgetItem->widget() );
+
+    // qDebug() << "QDockAreaLayoutInfo::plug " << tabbed;
+
+    return widgetItem;
 }
 
 QLayoutItem *QDockAreaLayoutInfo::unplug(const QList<int> &path)
