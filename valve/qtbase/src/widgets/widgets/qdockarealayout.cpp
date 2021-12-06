@@ -2172,7 +2172,7 @@ bool QDockAreaLayoutInfo::updateTabBar() const
         dwgw->adjustFlags();
 
     //returns if the tabbar is visible or not
-    return ( (gap ? 1 : 0) + tabBar->count()) > 1;
+    return ( (gap ? 1 : 0) + tabBar->count()) > 0;
 }
 
 void QDockAreaLayoutInfo::setTabBarShape(int shape)
