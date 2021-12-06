@@ -1704,46 +1704,58 @@ QMainWindowTabBar::QMainWindowTabBar(QMainWindow *parent)
 
 void QMainWindowTabBar::mouseMoveEvent(QMouseEvent *e)
 {
-    // The QTabBar handles the moving (reordering) of tabs.
-    // When QTabBarPrivate::dragInProgress is true, and that the mouse is outside of a region
-    // around the QTabBar, we will consider the user wants to drag that QDockWidget away from this
-    // tab area.
-
     QTabBarPrivate *d = static_cast<QTabBarPrivate*>(d_ptr.data());
-    if (!draggingDock && (mainWindow->dockOptions() & QMainWindow::GroupedDragging)) {
+    if ( !draggingDock && d->validIndex( d->pressedIndex) ) 
+    {
         int offset = QApplication::startDragDistance() + 1;
-        offset *= 3;
-        QRect r = rect().adjusted(-offset, -offset, offset, offset);
-        if (d->dragInProgress && !r.contains(e->pos()) && d->validIndex(d->pressedIndex)) {
+        QRect r = tabRect( d->pressedIndex ).adjusted(-offset, -offset, offset, offset);
+
+        //
+        // garry: if we drag the tab outside of the tab
+        //
+        if ( !r.contains(e->pos()) )  
+        {
             QMainWindowLayout* mlayout = qt_mainwindow_layout(mainWindow);
             QDockAreaLayoutInfo *info = mlayout->dockInfo(this);
             Q_ASSERT(info);
             int idx = info->tabIndexToListIndex(d->pressedIndex);
+            
             const QDockAreaLayoutItem &item = info->item_list.at(idx);
-            if (item.widgetItem
-                    && (draggingDock = qobject_cast<QDockWidget *>(item.widgetItem->widget()))) {
+
+            //
+            // And we're somehow assciated with a valid DockWidget
+            //
+            if (item.widgetItem && (draggingDock = qobject_cast<QDockWidget *>(item.widgetItem->widget()))) 
+            {
                 // We should drag this QDockWidget away by unpluging it.
                 // First cancel the QTabBar's internal move
                 d->moveTabFinished(d->pressedIndex);
                 d->pressedIndex = -1;
+
                 if (d->movingTab)
-                    d->movingTab->setVisible(false);
+                    d->movingTab->setVisible( false );
+
                 d->dragStartPosition = QPoint();
 
-                // Then starts the drag using QDockWidgetPrivate's API
+                //
+                // Start the drag using QDockWidgetPrivate's API
+                //
                 QDockWidgetPrivate *dockPriv = static_cast<QDockWidgetPrivate *>(QObjectPrivate::get(draggingDock));
                 QDockWidgetLayout *dwlayout = static_cast<QDockWidgetLayout *>(draggingDock->layout());
                 dockPriv->initDrag(dwlayout->titleArea().center(), true);
                 dockPriv->startDrag(false);
+                
                 if (dockPriv->state)
                     dockPriv->state->ctrlDrag = e->modifiers() & Qt::ControlModifier;
             }
         }
     }
 
-    if (draggingDock) {
+    if (draggingDock) 
+    {
         QDockWidgetPrivate *dockPriv = static_cast<QDockWidgetPrivate *>(QObjectPrivate::get(draggingDock));
-        if (dockPriv->state && dockPriv->state->dragging) {
+        if (dockPriv->state && dockPriv->state->dragging) 
+        {
             QPoint pos = e->globalPos() - dockPriv->state->pressPos;
             draggingDock->move(pos);
             // move will call QMainWindowLayout::hover
@@ -1801,7 +1813,7 @@ QTabBar *QMainWindowLayout::getTabBar()
         result->setDrawBase(true);
         result->setElideMode(Qt::ElideRight);
         result->setDocumentMode(_documentMode);
-        result->setMovable(true);
+        result->setMovable(false);
         connect(result, SIGNAL(currentChanged(int)), this, SLOT(tabChanged()));
         connect(result, &QTabBar::tabMoved, this, &QMainWindowLayout::tabMoved);
     }
