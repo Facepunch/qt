@@ -3100,31 +3100,31 @@ bool QDockAreaLayout::restoreDockWidget(QDockWidget *dockWidget)
     return true;
 }
 
-void QDockAreaLayout::addDockWidget(QInternal::DockPosition pos, QDockWidget *dockWidget,
-                                             Qt::Orientation orientation)
+void QDockAreaLayout::addDockWidget(QInternal::DockPosition pos, QDockWidget *dockWidget, Qt::Orientation orientation)
 {
     QLayoutItem *dockWidgetItem = new QDockWidgetItem(dockWidget);
     QDockAreaLayoutInfo &info = docks[pos];
-    if (orientation == info.o || info.item_list.count() <= 1) {
-        // empty dock areas, or dock areas containing exactly one widget can have their orientation
-        // switched.
-        info.o = orientation;
 
-        QDockAreaLayoutItem new_item(dockWidgetItem);
-        info.item_list.append(new_item);
-#if QT_CONFIG(tabbar)
-        if (info.tabbed && !new_item.skip()) {
-            info.updateTabBar();
-            info.setCurrentTabId(tabId(new_item));
-        }
-#endif
-    } else {
-#if QT_CONFIG(tabbar)
-        int tbshape = info.tabBarShape;
-#else
-        int tbshape = 0;
-#endif
-        QDockAreaLayoutInfo new_info(&sep, pos, orientation, tbshape, mainWindow);
+    if ( info.item_list.count() == 0 )
+    {
+        //
+        // garry: if we're the only item, wrap it so we can have a tab
+        //
+        QDockAreaLayoutInfo new_tab( &sep, pos, orientation, info.tabBarShape, mainWindow );
+
+        new_tab.item_list.append( QDockAreaLayoutItem(dockWidgetItem) );
+        new_tab.tabbed = true;
+        new_tab.updateTabBar();
+        new_tab.setCurrentTabId(0);
+
+        info.item_list.append( QDockAreaLayoutItem( new QDockAreaLayoutInfo(new_tab) ) );
+    } 
+    else 
+    {
+        //
+        // garry: If we're adding more than one, split us up
+        //
+        QDockAreaLayoutInfo new_info(&sep, pos, orientation, info.tabBarShape, mainWindow);
         new_info.item_list.append(QDockAreaLayoutItem(new QDockAreaLayoutInfo(info)));
         new_info.item_list.append(QDockAreaLayoutItem(dockWidgetItem));
         info = new_info;
