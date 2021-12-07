@@ -982,26 +982,26 @@ int QDockAreaLayoutInfo::separatorMove(int index, int delta)
 void QDockAreaLayoutInfo::unnest(int index)
 {
     QDockAreaLayoutItem &item = item_list[index];
-    if (item.subinfo == nullptr)
-        return;
-    if (item.subinfo->item_list.count() > 1)
-        return;
 
-    if (item.subinfo->item_list.count() == 0) {
+    if ( item.subinfo == nullptr ) return;
+
+    if (item.subinfo->item_list.count() == 0) 
+    {
         item_list.removeAt(index);
-    } else if (item.subinfo->item_list.count() == 1) {
-        QDockAreaLayoutItem &child = item.subinfo->item_list.first();
-        if (child.widgetItem != nullptr) {
-            item.widgetItem = child.widgetItem;
-            delete item.subinfo;
-            item.subinfo = nullptr;
-        } else if (child.subinfo != nullptr) {
-            QDockAreaLayoutInfo *tmp = item.subinfo;
-            item.subinfo = child.subinfo;
-            child.subinfo = nullptr;
-            tmp->item_list.clear();
-            delete tmp;
-        }
+        return;
+    } 
+
+    if ( item.subinfo->item_list.count() > 1 ) return;
+
+    QDockAreaLayoutItem &child = item.subinfo->item_list.first();
+
+    if (child.subinfo != nullptr) 
+    {
+        QDockAreaLayoutInfo *tmp = item.subinfo;
+        item.subinfo = child.subinfo;
+        child.subinfo = nullptr;
+        tmp->item_list.clear();
+        delete tmp;
     }
 }
 
