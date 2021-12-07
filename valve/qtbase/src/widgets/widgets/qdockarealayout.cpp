@@ -2113,7 +2113,6 @@ bool QDockAreaLayoutInfo::updateTabBar() const
         that->tabBar = mainWindowLayout()->getTabBar();
         that->tabBar->setShape(static_cast<QTabBar::Shape>(tabBarShape));
         that->tabBar->setDrawBase(true);
-        that->tabBar->setContentsMargins( 8, 0, 0, 0 );
     }
 
     const QSignalBlocker blocker(tabBar);
