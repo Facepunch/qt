@@ -139,7 +139,7 @@ bool QDockAreaLayoutItem::skip() const
 QSize QDockAreaLayoutItem::minimumSize() const
 {
     if (widgetItem)
-        return widgetItem->minimumSize().grownBy(widgetItem->widget()->contentsMargins());
+        return widgetItem->minimumSize().grownBy(widgetItem->widget()->contentsMargins()).grownBy( { 4, 4, 4, 4 } );
     if (subinfo != nullptr)
         return subinfo->minimumSize();
     return QSize(0, 0);
@@ -174,10 +174,13 @@ QSize QDockAreaLayoutItem::sizeHint() const
 {
     if (placeHolderItem != nullptr)
         return QSize(0, 0);
+
     if (widgetItem)
-        return widgetItem->sizeHint().grownBy(widgetItem->widget()->contentsMargins());
+        return widgetItem->sizeHint().grownBy(widgetItem->widget()->contentsMargins()).grownBy( { 4, 4, 4, 4 } );
+
     if (subinfo != nullptr)
         return subinfo->sizeHint();
+
     return QSize(-1, -1);
 }
 
@@ -1140,7 +1143,7 @@ static QRect dockedGeometry(QWidget *widget)
     QDockWidgetLayout *layout
         = qobject_cast<QDockWidgetLayout*>(widget->layout());
     if (layout && layout->nativeWindowDeco())
-        titleHeight = layout->titleHeight();
+        titleHeight = 0;
 
     QRect result = widget->geometry();
     result.adjust(0, -titleHeight, 0, 0);
@@ -2110,6 +2113,7 @@ bool QDockAreaLayoutInfo::updateTabBar() const
         that->tabBar = mainWindowLayout()->getTabBar();
         that->tabBar->setShape(static_cast<QTabBar::Shape>(tabBarShape));
         that->tabBar->setDrawBase(true);
+        that->tabBar->setContentsMargins( 8, 0, 0, 0 );
     }
 
     const QSignalBlocker blocker(tabBar);

@@ -1806,9 +1806,11 @@ QTabBar *QMainWindowLayout::getTabBar()
     }
 
     QTabBar *result = nullptr;
-    if (!unusedTabBars.isEmpty()) {
+    if (!unusedTabBars.isEmpty()) 
+    {
         result = unusedTabBars.takeLast();
-    } else {
+    } else 
+    {
         result = new QMainWindowTabBar(static_cast<QMainWindow *>(parentWidget()));
         result->setDrawBase(true);
         result->setElideMode(Qt::ElideRight);
@@ -2169,7 +2171,7 @@ bool QMainWindowLayout::plug(QLayoutItem *widgetItem)
     if (qobject_cast<QDockWidget*>(widget) != 0) {
         QDockWidgetLayout *layout = qobject_cast<QDockWidgetLayout*>(widget->layout());
         if (layout->nativeWindowDeco()) {
-            globalRect.adjust(0, layout->titleHeight(), 0, 0);
+            globalRect.adjust(0, 0, 0, 0);
         } else {
             int fw = widget->style()->pixelMetric(QStyle::PM_DockWidgetFrameWidth, nullptr, widget);
             globalRect.adjust(-fw, -fw, fw, fw);

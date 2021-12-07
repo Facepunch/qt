@@ -153,15 +153,13 @@ public:
 
     void setGeometry(const QRect &r) override;
 
-    enum Role { Content, CloseButton, FloatButton, TitleBar, RoleCount };
+    enum Role { Content, RoleCount };
     QWidget *widgetForRole(Role r) const;
     void setWidgetForRole(Role r, QWidget *w);
     QLayoutItem *itemForRole(Role r) const;
 
     QRect titleArea() const { return _titleArea; }
 
-    int minimumTitleWidth() const;
-    int titleHeight() const;
     void updateMaxSize();
     static bool wmSupportsNativeWindowDeco();
     bool nativeWindowDeco() const;
