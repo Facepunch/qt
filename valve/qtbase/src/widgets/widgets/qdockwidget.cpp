@@ -1737,6 +1737,33 @@ QWidget *QDockWidget::titleBarWidget() const
     return layout->widgetForRole(QDockWidgetLayout::TitleBar);
 }
 
+void QDockWidget::initializeTabButton( QTabBar* tabBar, int index )
+{
+    //
+    // Things got a bit more complicated here than I'd hoped. This function can get called multiple
+    // times so we need to make sure that we're only doing our thing once. I think it gets called
+    // if you set a tab button. I could make this neater for people overriding it but it's dinner time.
+    //
+
+    auto btn = tabBar->tabButton( index, QTabBar::ButtonPosition::RightSide );
+    if ( btn != nullptr )
+    {
+        const QVariant v = btn->property( "__ownerDock" );
+        if ( v.isValid() && qvariant_cast<QDockWidget*>( v ) == this )
+            return;
+    }
+
+    if ( !(features() & DockWidgetClosable) ) return;
+
+    QAbstractButton *closeButton = new QToolButton( nullptr );
+    closeButton->setText( "x" );
+    closeButton->setObjectName( "CloseButton" );
+    closeButton->setProperty( "__ownerDock", QVariant::fromValue( this ) );
+    connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
+
+    tabBar->setTabButton( index, QTabBar::ButtonPosition::RightSide, closeButton );
+}
+
 QT_END_NAMESPACE
 
 #include "qdockwidget.moc"

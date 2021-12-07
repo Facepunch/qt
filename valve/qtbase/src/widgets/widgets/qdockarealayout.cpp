@@ -2157,6 +2157,8 @@ bool QDockAreaLayoutInfo::updateTabBar() const
             tabBar->setTabToolTip(tab_idx, title);
         }
 
+        dw->initializeTabButton( tabBar, tab_idx );
+
         ++tab_idx;
     }
 

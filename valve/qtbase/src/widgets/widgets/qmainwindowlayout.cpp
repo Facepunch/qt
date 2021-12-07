@@ -1696,8 +1696,7 @@ protected:
 
 };
 
-QMainWindowTabBar::QMainWindowTabBar(QMainWindow *parent)
-    : QTabBar(parent), mainWindow(parent)
+QMainWindowTabBar::QMainWindowTabBar(QMainWindow *parent) : QTabBar(parent), mainWindow(parent)
 {
     setExpanding(false);
 }
@@ -1744,7 +1743,7 @@ void QMainWindowTabBar::mouseMoveEvent(QMouseEvent *e)
                 QDockWidgetLayout *dwlayout = static_cast<QDockWidgetLayout *>(draggingDock->layout());
                 dockPriv->initDrag(dwlayout->titleArea().center(), true);
                 dockPriv->startDrag(false);
-                
+
                 if (dockPriv->state)
                     dockPriv->state->ctrlDrag = e->modifiers() & Qt::ControlModifier;
             }
@@ -1782,6 +1781,7 @@ bool QMainWindowTabBar::event(QEvent *e)
 
     if (e->type() != QEvent::ToolTip)
         return QTabBar::event(e);
+        
     QSize size = this->size();
     QSize hint = sizeHint();
     if (shape() == QTabBar::RoundedWest || shape() == QTabBar::RoundedEast) {

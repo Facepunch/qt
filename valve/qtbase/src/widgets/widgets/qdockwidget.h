@@ -51,6 +51,7 @@ class QDockAreaLayout;
 class QDockWidgetPrivate;
 class QMainWindow;
 class QStyleOptionDockWidget;
+class QTabBar;
 
 class Q_WIDGETS_EXPORT QDockWidget : public QWidget
 {
@@ -132,6 +133,10 @@ private:
     friend class QMainWindowLayout;
     friend class QDockWidgetLayout;
     friend class QDockAreaLayoutInfo;
+
+public:
+
+    virtual void initializeTabButton( QTabBar* tabBar, int index );
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QDockWidget::DockWidgetFeatures)
