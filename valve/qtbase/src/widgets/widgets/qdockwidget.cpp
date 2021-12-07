@@ -1427,7 +1427,7 @@ QAction * QDockWidget::toggleViewAction() const
     \sa titleBarWidget(), DockWidgetVerticalTitleBar
 */
 
-void QDockWidget::setTitleBarWidget(QWidget *widget)
+void QDockWidget::setTitleBarWidget( QWidget *widget )
 {
 
 }
@@ -1471,6 +1471,7 @@ void QDockWidget::initializeTabButton( QTabBar* tabBar, int index )
 
     tabBar->setTabButton( index, QTabBar::ButtonPosition::RightSide, closeButton );
     //tabBar->setTabIcon( index, windowIcon() );
+    closeButton->setVisible( false );
 }
 
 QT_END_NAMESPACE

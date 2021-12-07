@@ -1693,16 +1693,43 @@ protected:
     bool event(QEvent *e) override;
     void mouseReleaseEvent(QMouseEvent*) override;
     void mouseMoveEvent(QMouseEvent*) override;
+    void leaveEvent(QEvent *event) override;
+    int hovered_index = -1;
 
 };
 
 QMainWindowTabBar::QMainWindowTabBar(QMainWindow *parent) : QTabBar(parent), mainWindow(parent)
 {
     setExpanding(false);
+    setMouseTracking(true);
+}
+
+void QMainWindowTabBar::leaveEvent(QEvent *e)
+{
+    if ( hovered_index >= 0 )
+    {
+        auto btnA = tabButton( hovered_index, QTabBar::RightSide );
+        if ( btnA ) btnA->setVisible( false );
+        hovered_index = -1;
+    }
+
+    QTabBar::leaveEvent(e);
 }
 
 void QMainWindowTabBar::mouseMoveEvent(QMouseEvent *e)
 {
+    int hovered = tabAt( e->pos() );
+    if ( hovered != hovered_index )
+    {
+        auto btnA = tabButton( hovered_index, QTabBar::RightSide );
+        auto btnB = tabButton( hovered, QTabBar::RightSide );
+
+        hovered_index = hovered;
+
+        if ( btnA ) btnA->setVisible( false );
+        if ( btnB ) btnB->setVisible( true );
+    }
+
     QTabBarPrivate *d = static_cast<QTabBarPrivate*>(d_ptr.data());
     if ( !draggingDock && d->validIndex( d->pressedIndex) ) 
     {
