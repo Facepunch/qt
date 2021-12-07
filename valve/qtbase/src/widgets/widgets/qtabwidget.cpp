@@ -1408,7 +1408,6 @@ void QTabWidget::setDocumentMode(bool enabled)
     Q_D(QTabWidget);
     d->tabs->setDocumentMode(enabled);
     d->tabs->setExpanding(!enabled);
-    d->tabs->setDrawBase(enabled);
     setUpLayout();
 }
 
