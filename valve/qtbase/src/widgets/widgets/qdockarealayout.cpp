@@ -3123,19 +3123,18 @@ void QDockAreaLayout::addDockWidget(QInternal::DockPosition pos, QDockWidget *do
     QLayoutItem *dockWidgetItem = new QDockWidgetItem(dockWidget);
     QDockAreaLayoutInfo &info = docks[pos];
 
+    QDockAreaLayoutInfo* new_tab = new QDockAreaLayoutInfo( &sep, pos, orientation, info.tabBarShape, mainWindow );
+    new_tab->item_list.append( QDockAreaLayoutItem(dockWidgetItem) );
+    new_tab->tabbed = true;
+    new_tab->updateTabBar();
+    new_tab->setCurrentTabId(0);
+
     if ( info.item_list.count() == 0 )
     {
         //
         // garry: if we're the only item, wrap it so we can have a tab
         //
-        QDockAreaLayoutInfo new_tab( &sep, pos, orientation, info.tabBarShape, mainWindow );
-
-        new_tab.item_list.append( QDockAreaLayoutItem(dockWidgetItem) );
-        new_tab.tabbed = true;
-        new_tab.updateTabBar();
-        new_tab.setCurrentTabId(0);
-
-        info.item_list.append( QDockAreaLayoutItem( new QDockAreaLayoutInfo(new_tab) ) );
+        info.item_list.append( QDockAreaLayoutItem( new_tab ) );
     } 
     else 
     {
@@ -3144,7 +3143,8 @@ void QDockAreaLayout::addDockWidget(QInternal::DockPosition pos, QDockWidget *do
         //
         QDockAreaLayoutInfo new_info(&sep, pos, orientation, info.tabBarShape, mainWindow);
         new_info.item_list.append(QDockAreaLayoutItem(new QDockAreaLayoutInfo(info)));
-        new_info.item_list.append(QDockAreaLayoutItem(dockWidgetItem));
+        new_info.item_list.append(QDockAreaLayoutItem(new_tab));
+
         info = new_info;
     }
 
