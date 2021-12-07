@@ -1718,21 +1718,36 @@ void QDockAreaLayoutInfo::tab(int index, QLayoutItem *dockWidgetItem)
 }
 #endif // QT_CONFIG(tabbar)
 
-void QDockAreaLayoutInfo::split(int index, Qt::Orientation orientation,
-                                       QLayoutItem *dockWidgetItem)
+void QDockAreaLayoutInfo::split( int index, Qt::Orientation orientation, QLayoutItem *dockWidgetItem )
 {
-    if (orientation == o) {
+   // qDebug() << "splitting" << index;
+
+    if (orientation == o) 
+    {
+      //  qDebug() << "orientation matches" << orientation;
+
         item_list.insert(index + 1, QDockAreaLayoutItem(dockWidgetItem));
-    } else {
-#if !QT_CONFIG(tabbar)
-        const int tabBarShape = 0;
-#endif
-        QDockAreaLayoutInfo *new_info
-            = new QDockAreaLayoutInfo(sep, dockPos, orientation, tabBarShape, mainWindow);
-        item_list[index].subinfo = new_info;
-        new_info->item_list.append(QDockAreaLayoutItem(item_list.at(index).widgetItem));
-        item_list[index].widgetItem = nullptr;
+    } 
+    else 
+    {
+       // qDebug() << "orientation no match" << orientation;
+        //qDebug() << "subinfo is null? " << (item_list[index].subinfo == nullptr);
+        QDockAreaLayoutInfo *new_info = new QDockAreaLayoutInfo(sep, dockPos, orientation, tabBarShape, mainWindow);
+        
+        if ( item_list[index].subinfo != nullptr )
+        {
+            new_info->item_list.append( QDockAreaLayoutItem( item_list[index].subinfo ) );
+            item_list[index].subinfo = nullptr;
+        }
+        else
+        {
+            new_info->item_list.append(QDockAreaLayoutItem(item_list.at(index).widgetItem));
+            item_list[index].widgetItem = nullptr;
+        }
+
         new_info->item_list.append(QDockAreaLayoutItem(dockWidgetItem));
+
+        item_list[index].subinfo = new_info;
     }
 }
 
@@ -3201,17 +3216,31 @@ void QDockAreaLayout::resizeDocks(const QList<QDockWidget *> &docks,
     }
 }
 
-void QDockAreaLayout::splitDockWidget(QDockWidget *after,
-                                               QDockWidget *dockWidget,
-                                               Qt::Orientation orientation)
+void QDockAreaLayout::splitDockWidget(QDockWidget *after, QDockWidget *dockWidget, Qt::Orientation orientation)
 {
-    const QList<int> path = indexOf(after);
+    QList<int> path = indexOf(after);
     if (path.isEmpty())
         return;
 
+    int targetId = path.last();
     QDockAreaLayoutInfo *info = this->info(path);
+
+    //
+    // Garry: If our target is tabbed, we can't just split it up. We need
+    // to add to its parent instead. This is broken in default qt too. There's
+    // forum posts and everything.
+    //
+    if ( info->tabbed )
+    {
+        path.removeAt( path.size() - 1 );
+        QDockAreaLayoutInfo *parentInfo = this->info(path);
+
+        targetId = path.last();
+        info = parentInfo;
+    }
+
     Q_ASSERT(info != nullptr);
-    info->split(path.last(), orientation, new QDockWidgetItem(dockWidget));
+    info->split(targetId, orientation, new QDockWidgetItem(dockWidget));
 
     removePlaceHolder(dockWidget->objectName());
 }
