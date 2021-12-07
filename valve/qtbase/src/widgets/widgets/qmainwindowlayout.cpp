@@ -705,7 +705,7 @@ void QMainWindowLayoutState::fitLayout()
 #endif // QT_CONFIG(toolbar)
 
 #if QT_CONFIG(dockwidget)
-    dockAreaLayout.rect = r;
+    dockAreaLayout.rect = r.marginsAdded( { -4, 0, -4, -4 } ); // garry: margin on left/right of window
     dockAreaLayout.fitLayout();
 #else
     centralWidgetRect = r;
