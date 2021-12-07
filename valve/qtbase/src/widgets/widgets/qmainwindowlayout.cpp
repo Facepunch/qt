@@ -1812,7 +1812,7 @@ QTabBar *QMainWindowLayout::getTabBar()
     } else 
     {
         result = new QMainWindowTabBar(static_cast<QMainWindow *>(parentWidget()));
-        result->setDrawBase(true);
+        result->setDrawBase(false);
         result->setElideMode(Qt::ElideRight);
         result->setDocumentMode(_documentMode);
         result->setMovable(false);
