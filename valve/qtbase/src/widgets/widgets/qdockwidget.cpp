@@ -115,53 +115,6 @@ static inline bool hasFeature(const QDockWidget *dockwidget, QDockWidget::DockWi
 
 */
 
-/******************************************************************************
-** QDockWidgetTitleButton
-*/
-
-class QDockWidgetTitleButton : public QAbstractButton
-{
-    Q_OBJECT
-
-public:
-    QDockWidgetTitleButton(QDockWidget *dockWidget);
-
-    QSize sizeHint() const override;
-    QSize minimumSizeHint() const override
-    { return sizeHint(); }
-
-    void enterEvent(QEvent *event) override;
-    void leaveEvent(QEvent *event) override;
-    void paintEvent(QPaintEvent *event) override;
-
-protected:
-    bool event(QEvent *event) override;
-
-private:
-    QSize dockButtonIconSize() const;
-
-    mutable int m_iconSize = -1;
-};
-
-QDockWidgetTitleButton::QDockWidgetTitleButton(QDockWidget *dockWidget)
-    : QAbstractButton(dockWidget)
-{
-    setFocusPolicy(Qt::NoFocus);
-}
-
-bool QDockWidgetTitleButton::event(QEvent *event)
-{
-    switch (event->type()) {
-    case QEvent::StyleChange:
-    case QEvent::ScreenChangeInternal:
-        m_iconSize = -1;
-        break;
-    default:
-        break;
-    }
-    return QAbstractButton::event(event);
-}
-
 static inline bool isWindowsStyle(const QStyle *style)
 {
     // Note: QStyleSheetStyle inherits QWindowsStyle
@@ -179,72 +132,6 @@ static inline bool isWindowsStyle(const QStyle *style)
     return effectiveStyle->inherits("QWindowsStyle");
 }
 
-QSize QDockWidgetTitleButton::dockButtonIconSize() const
-{
-    if (m_iconSize < 0) {
-        m_iconSize = style()->pixelMetric(QStyle::PM_SmallIconSize, nullptr, this);
-        // Dock Widget title buttons on Windows where historically limited to size 10
-        // (from small icon size 16) since only a 10x10 XPM was provided.
-        // Adding larger pixmaps to the icons thus caused the icons to grow; limit
-        // this to qpiScaled(10) here.
-        if (isWindowsStyle(style()))
-            m_iconSize = qMin((10 * logicalDpiX()) / 96, m_iconSize);
-    }
-    return QSize(m_iconSize, m_iconSize);
-}
-
-QSize QDockWidgetTitleButton::sizeHint() const
-{
-    ensurePolished();
-
-    int size = 2*style()->pixelMetric(QStyle::PM_DockWidgetTitleBarButtonMargin, nullptr, this);
-    if (!icon().isNull()) {
-        const QSize sz = icon().actualSize(dockButtonIconSize());
-        size += qMax(sz.width(), sz.height());
-    }
-
-    return QSize(size, size);
-}
-
-void QDockWidgetTitleButton::enterEvent(QEvent *event)
-{
-    if (isEnabled()) update();
-    QAbstractButton::enterEvent(event);
-}
-
-void QDockWidgetTitleButton::leaveEvent(QEvent *event)
-{
-    if (isEnabled()) update();
-    QAbstractButton::leaveEvent(event);
-}
-
-void QDockWidgetTitleButton::paintEvent(QPaintEvent *)
-{
-    QPainter p(this);
-
-    QStyleOptionToolButton opt;
-    opt.init(this);
-    opt.state |= QStyle::State_AutoRaise;
-
-    if (style()->styleHint(QStyle::SH_DockWidget_ButtonsHaveFrame, nullptr, this))
-    {
-        if (isEnabled() && underMouse() && !isChecked() && !isDown())
-            opt.state |= QStyle::State_Raised;
-        if (isChecked())
-            opt.state |= QStyle::State_On;
-        if (isDown())
-            opt.state |= QStyle::State_Sunken;
-        style()->drawPrimitive(QStyle::PE_PanelButtonTool, &opt, &p, this);
-    }
-
-    opt.icon = icon();
-    opt.subControls = { };
-    opt.activeSubControls = { };
-    opt.features = QStyleOptionToolButton::None;
-    opt.arrowType = Qt::NoArrow;
-    opt.iconSize = dockButtonIconSize();
-    style()->drawComplexControl(QStyle::CC_ToolButton, &opt, &p, this);
-}
 
 /******************************************************************************
 ** QDockWidgetLayout
@@ -480,6 +367,12 @@ void QDockWidgetLayout::setGeometry(const QRect &geometry)
 {
     QRect rect = geometry;
 
+    //
+    // I want padding inside my dock panel but I don't
+    // know how to access the padding from the stylesheet
+    // so I'm hard coding this here cuz fuck it, every other
+    // thing in this framework is hardcoded like this.
+    //
     rect.setLeft( rect.left() + 4 );
     rect.setTop( rect.top() + 4 );
     rect.setRight( rect.right() - 4 );
