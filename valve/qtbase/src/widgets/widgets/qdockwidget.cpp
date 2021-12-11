@@ -1427,24 +1427,6 @@ QAction * QDockWidget::toggleViewAction() const
     \sa titleBarWidget(), DockWidgetVerticalTitleBar
 */
 
-void QDockWidget::setTitleBarWidget( QWidget *widget )
-{
-
-}
-
-/*!
-    \since 4.3
-    Returns the custom title bar widget set on the QDockWidget, or
-    \nullptr if no custom title bar has been set.
-
-    \sa setTitleBarWidget()
-*/
-
-QWidget *QDockWidget::titleBarWidget() const
-{
-    return nullptr;
-}
-
 void QDockWidget::initializeTabButton( QTabBar* tabBar, int index )
 {
     //

@@ -99,8 +99,13 @@ public:
     void setAllowedAreas(Qt::DockWidgetAreas areas);
     Qt::DockWidgetAreas allowedAreas() const;
 
-    void setTitleBarWidget(QWidget *widget);
-    QWidget *titleBarWidget() const;
+    //
+    // garry: these aren't used anymore
+    //
+#if QT_DEPRECATED_SINCE(5, 0)
+    void setTitleBarWidget(QWidget *){}
+    QWidget *titleBarWidget() const{ return nullptr; }
+#endif
 
     inline bool isAreaAllowed(Qt::DockWidgetArea area) const
     { return (allowedAreas() & area) == area; }
