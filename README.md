@@ -2,7 +2,7 @@
 
 Our build of qt, which is based on Valve's build of qt. We'll try to keep a list of changes below, but really if you're trying to use this you're on your own.
 
-## December 2021
+### December 2021
 
 * QDockWidget should always show a tab when docked
 * QDockWidget can be dragged with its tab
