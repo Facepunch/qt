@@ -142,6 +142,12 @@ private:
 public:
 
     virtual void initializeTabButton( QTabBar* tabBar, int index );
+    virtual QIcon icon() const{  return m_icon; }
+    virtual void setIcon( const QIcon &icon ) { m_icon = icon; }
+
+    protected:
+
+    QIcon m_icon;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QDockWidget::DockWidgetFeatures)

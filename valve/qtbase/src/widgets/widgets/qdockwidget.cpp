@@ -1452,7 +1452,12 @@ void QDockWidget::initializeTabButton( QTabBar* tabBar, int index )
     connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
 
     tabBar->setTabButton( index, QTabBar::ButtonPosition::RightSide, closeButton );
-    //tabBar->setTabIcon( index, windowIcon() );
+
+    if ( !m_icon.isNull() )
+    {
+        tabBar->setTabIcon( index, m_icon );
+    }
+
     closeButton->setVisible( false );
 }
 
