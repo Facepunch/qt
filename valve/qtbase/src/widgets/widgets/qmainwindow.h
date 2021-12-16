@@ -123,8 +123,8 @@ public:
     bool isSeparator(const QPoint &pos) const;
 
 #if QT_CONFIG(menubar)
-    QMenuBar *menuBar() const;
-    void setMenuBar(QMenuBar *menubar);
+    virtual QMenuBar *menuBar() const;
+    virtual void setMenuBar(QMenuBar *menubar);
 
     QWidget  *menuWidget() const;
     void setMenuWidget(QWidget *menubar);
