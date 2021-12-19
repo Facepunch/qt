@@ -96,10 +96,10 @@ static bool get_hex_rgb(const char *name, size_t len, QRgba64 *rgb)
         g = (g << 4) | (g >> 8);
         b = (b << 4) | (b >> 8);
     } else if (len == 8) {
-        a = hex2int(name + 0, 2) * 0x101;
-        r = hex2int(name + 2, 2) * 0x101;
-        g = hex2int(name + 4, 2) * 0x101;
-        b = hex2int(name + 6, 2) * 0x101;
+        r = hex2int(name + 0, 2) * 0x101;
+        g = hex2int(name + 2, 2) * 0x101;
+        b = hex2int(name + 4, 2) * 0x101;
+        a = hex2int(name + 6, 2) * 0x101;
     } else if (len == 6) {
         r = hex2int(name + 0, 2) * 0x101;
         g = hex2int(name + 2, 2) * 0x101;
