@@ -1507,7 +1507,10 @@ public:
     {
         if (isNullNode(node))
             return QStringList();
-        const QMetaObject *metaObject = OBJECT_PTR(node)->metaObject();
+
+        QObject *obj = OBJECT_PTR(node);
+
+        const QMetaObject *metaObject = obj->metaObject();
 #ifndef QT_NO_TOOLTIP
         if (qstrcmp(metaObject->className(), "QTipLabel") == 0)
             return QStringList(QLatin1String("QToolTip"));
@@ -1517,6 +1520,13 @@ public:
             result += QString::fromLatin1(metaObject->className()).replace(QLatin1Char(':'), QLatin1Char('-'));
             metaObject = metaObject->superClass();
         } while (metaObject != nullptr);
+
+        QWidget *w = qobject_cast<QWidget *>(obj);
+        if ( w )
+        {
+            w->CollectClassNames( result );
+        }
+
         return result;
     }
     QString attribute(NodePtr node, const QString& name) const override
@@ -1559,7 +1569,8 @@ public:
     {
         if (isNullNode(node))
             return false;
-        const QMetaObject *metaObject = OBJECT_PTR(node)->metaObject();
+        QObject *obj = OBJECT_PTR(node);
+        const QMetaObject *metaObject = obj->metaObject();
 #ifndef QT_NO_TOOLTIP
         if (qstrcmp(metaObject->className(), "QTipLabel") == 0)
             return nodeName == QLatin1String("QToolTip");
@@ -1576,6 +1587,13 @@ public:
                 return true;
             metaObject = metaObject->superClass();
         } while (metaObject != nullptr);
+
+        QWidget *w = qobject_cast<QWidget *>(obj);
+        if ( w )
+        {
+            return w->managedClassNames.contains( nodeName );
+        }
+
         return false;
     }
     bool hasAttributes(NodePtr) const override

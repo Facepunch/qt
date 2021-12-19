@@ -745,6 +745,29 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_showIfNotHidden())
 
     QWidgetData *data;
+
+// facepunch changes
+public:
+
+    //
+    // Lets let managed class names appear in stylesheets just like regular classnames
+    // This should make things a bit tidier, since we won't have to do dumb shit like 
+    // name every object and do classes based on that.
+    //
+    QStringList managedClassNames;
+
+    void AddClassName( QString name )
+    {
+        managedClassNames.append( name );
+    }
+
+    void CollectClassNames( QStringList& list )
+    {
+        if ( managedClassNames.count() == 0 )
+            return;
+            
+        list = managedClassNames + list;
+    }
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QWidget::RenderFlags)
