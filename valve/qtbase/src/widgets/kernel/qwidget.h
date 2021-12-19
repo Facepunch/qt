@@ -768,6 +768,8 @@ public:
             
         list = managedClassNames + list;
     }
+
+    void Polish();
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QWidget::RenderFlags)

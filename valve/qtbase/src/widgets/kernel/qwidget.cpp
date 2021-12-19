@@ -12849,6 +12849,22 @@ QDebug operator<<(QDebug debug, const QWidget *widget)
 }
 #endif // !QT_NO_DEBUG_STREAM
 
+// facepunch
+
+void QWidget::Polish()
+{
+    style()->unpolish( this );
+    style()->polish( this );
+
+    QEvent event(QEvent::StyleChange);
+    QApplication::sendEvent( this, &event);
+
+    update();
+    updateGeometry();
+}
+
+// end facepunch
+
 QT_END_NAMESPACE
 
 #include "moc_qwidget.cpp"
