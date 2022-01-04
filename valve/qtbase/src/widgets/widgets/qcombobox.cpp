@@ -3473,6 +3473,9 @@ void QComboBox::keyReleaseEvent(QKeyEvent *e)
 #if QT_CONFIG(wheelevent)
 void QComboBox::wheelEvent(QWheelEvent *e)
 {
+    // garry: fuck this behaviour
+    return;
+
     Q_D(QComboBox);
     QStyleOptionComboBox opt;
     initStyleOption(&opt);
