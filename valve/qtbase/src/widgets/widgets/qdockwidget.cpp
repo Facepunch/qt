@@ -373,10 +373,10 @@ void QDockWidgetLayout::setGeometry(const QRect &geometry)
     // so I'm hard coding this here cuz fuck it, every other
     // thing in this framework is hardcoded like this.
     //
-    rect.setLeft( rect.left() + 4 );
-    rect.setTop( rect.top() + 4 );
-    rect.setRight( rect.right() - 4 );
-    rect.setBottom( rect.bottom() - 4 );
+    rect.setLeft( rect.left() + 1 );
+    rect.setTop( rect.top() + 1 );
+    rect.setRight( rect.right() - 1 );
+    rect.setBottom( rect.bottom() - 1 );
 
     if (QLayoutItem *item = item_list[Content])
         item->setGeometry(rect);
