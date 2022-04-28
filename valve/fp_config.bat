@@ -4,6 +4,7 @@ SET PATH=%_ROOT%\qtbase\bin;%_ROOT%\gnuwin32\bin;%_ROOT%\jom;%PATH%
 
 call %~dp0\configure.bat ^
 	-recheck-all ^
+	-platform win32-msvc ^
 	-prefix build_win64 ^
 	-opensource -confirm-license ^
 	-force-debug-info ^
