@@ -41,3 +41,34 @@ jobs:
       working-directory: valve
       shell: cmd
       run: jom\\\jom.exe install
+      
+    - uses: actions/upload-artifact@v3
+      with:
+        name: win64
+        path: |
+          build_win64/include/QtCore
+          build_win64/include/QtGui
+          build_win64/include/QtWidgets
+          build_win64/include/QtConcurrent
+          build_win64/bin/moc.*
+          build_win64/bin/rcc.*
+          build_win64/bin/uic.*
+          build_win64/bin/Qt5Core*
+          build_win64/lib/Qt5Concurrent.lib
+          build_win64/lib/Qt5Concurrentd.lib
+          build_win64/lib/Qt5Core.lib
+          build_win64/lib/Qt5Cored.lib
+          build_win64/lib/Qt5Gui.lib
+          build_win64/lib/Qt5Guid.lib
+          build_win64/lib/Qt5Network.lib
+          build_win64/lib/Qt5Networkd.lib
+          build_win64/lib/Qt5UiTools.lib
+          build_win64/lib/Qt5UiToolsd.lib
+          build_win64/lib/Qt5Widgets.lib
+          build_win64/lib/Qt5Widgetsd.lib
+          build_win64/plugins/platforms
+          build_win64/plugins/imageformats
+          build_win64/bin/Qt5Concurrent*
+          build_win64/bin/Qt5Core*
+          build_win64/bin/Qt5Gui*
+          build_win64/bin/Qt5Widgets*
