@@ -8,9 +8,11 @@ call %~dp0\configure.bat ^
 	-prefix build_win64 ^
 	-opensource -confirm-license ^
 	-force-debug-info ^
-	-debug-and-release ^
+	-release ^
 	-nomake examples ^
 	-nomake tests ^
+	-nomake tools ^
+	-no-opengl ^
 	-skip 3d ^
 	-skip activeqt ^
 	-skip androidextras ^
