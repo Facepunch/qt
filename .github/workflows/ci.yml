@@ -1,0 +1,35 @@
+name: MSBuild
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Config
+      working-directory: valve
+      shell: cmd
+      run: fp_config.bat
+
+    - name: Build
+      working-directory: valve
+      shell: cmd
+      run: jom
+      
+    - name: Install
+      working-directory: valve
+      shell: cmd
+      run: jom install
