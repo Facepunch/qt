@@ -354,29 +354,11 @@ void QAbstractScrollAreaPrivate::layoutChildren_helper(bool *needHorizontalScrol
 
     const bool hasCornerWidget = (cornerWidget != nullptr);
 
-    QPoint cornerOffset((needv && vscrollOverlap == 0) ? vsbExt : 0, (needh && hscrollOverlap == 0) ? hsbExt : 0);
-    QRect controlsRect;
-    QRect viewportRect;
+    QPoint cornerOffset( 0, 0 );
+    QRect controlsRect = widgetRect;
+    QRect viewportRect = widgetRect;
 
-    // In FrameOnlyAroundContents mode the frame is drawn between the controls and
-    // the viewport, else the frame rect is equal to the widget rect.
-    if ((frameStyle != QFrame::NoFrame) &&
-        q->style()->styleHint(QStyle::SH_ScrollView_FrameOnlyAroundContents, &opt, q)) {
-        controlsRect = widgetRect;
-        const int spacing = q->style()->pixelMetric(QStyle::PM_ScrollView_ScrollBarSpacing, &opt, q);
-        const QPoint cornerExtra(needv ? spacing + vscrollOverlap : 0, needh ? spacing + hscrollOverlap : 0);
-        QRect frameRect = widgetRect;
-        frameRect.adjust(0, 0, -cornerOffset.x() - cornerExtra.x(), -cornerOffset.y() - cornerExtra.y());
-        q->setFrameRect(QStyle::visualRect(opt.direction, opt.rect, frameRect));
-        // The frame rect needs to be in logical coords, however we need to flip
-        // the contentsRect back before passing it on to the viewportRect
-        // since the viewportRect has its logical coords calculated later.
-        viewportRect = QStyle::visualRect(opt.direction, opt.rect, q->contentsRect());
-    } else {
-        q->setFrameRect(QStyle::visualRect(opt.direction, opt.rect, widgetRect));
-        controlsRect = q->contentsRect();
-        viewportRect = QRect(controlsRect.topLeft(), controlsRect.bottomRight() - cornerOffset);
-    }
+    q->setFrameRect(QStyle::visualRect(opt.direction, opt.rect, widgetRect));
 
     cornerOffset = QPoint(needv ? vsbExt : 0, needh ? hsbExt : 0);
 
@@ -430,7 +412,8 @@ void QAbstractScrollAreaPrivate::layoutChildren_helper(bool *needHorizontalScrol
         scrollBarContainers[Qt::Vertical]->raise();
     }
 
-    if (cornerWidget) {
+    if (cornerWidget) 
+    {
         const QRect cornerWidgetRect(cornerPoint, controlsRect.bottomRight());
         cornerWidget->setGeometry(QStyle::visualRect(opt.direction, opt.rect, cornerWidgetRect));
     }
