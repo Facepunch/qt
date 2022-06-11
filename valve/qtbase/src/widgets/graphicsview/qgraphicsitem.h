@@ -144,7 +144,8 @@ public:
         ItemScaleChange,
         ItemScaleHasChanged,
         ItemTransformOriginPointChange,
-        ItemTransformOriginPointHasChanged
+        ItemTransformOriginPointHasChanged,
+        ItemMoved
     };
 
     enum CacheMode {

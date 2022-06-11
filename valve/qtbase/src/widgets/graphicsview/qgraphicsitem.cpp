@@ -7380,6 +7380,7 @@ void QGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                 }
 
                 item->setPos(initialPositions.value(item) + currentParentPos - buttonDownParentPos);
+                item->itemChange( QGraphicsItem::ItemMoved, item->scenePos() );
 
                 if (item->flags() & ItemIsSelectable)
                     item->setSelected(true);
