@@ -47,9 +47,13 @@ jobs:
         name: win64
         path: |
           valve/build_win64/include/QtCore
+          !valve/build_win64/include/QtCore/5.15.2*
           valve/build_win64/include/QtGui
+          !valve/build_win64/include/QtGui/5.15.2*
           valve/build_win64/include/QtWidgets
+          !valve/build_win64/include/QtWidgets/5.15.2*
           valve/build_win64/include/QtConcurrent
+          !valve/build_win64/include/QtConcurrent/5.15.2*
           valve/build_win64/bin/moc.*
           valve/build_win64/bin/rcc.*
           valve/build_win64/bin/uic.*
