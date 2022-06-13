@@ -432,6 +432,13 @@ QList<QGraphicsItem *> QGraphicsSceneIndex::items(const QPointF &pos, Qt::ItemSe
 QList<QGraphicsItem *> QGraphicsSceneIndex::items(const QRectF &rect, Qt::ItemSelectionMode mode,
                                                   Qt::SortOrder order, const QTransform &deviceTransform) const
 {
+
+    // Garry: if passing in a rect of 1 pixel size, just use pixel lookup
+    if ( rect.width() == 1 && rect.height() == 1 )
+    {
+        return items( QPoint( rect.left(), rect.top() ), mode, order, deviceTransform );
+    }
+
     Q_D(const QGraphicsSceneIndex);
     QRectF exposeRect = rect;
     _q_adjustRect(&exposeRect);
