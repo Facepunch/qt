@@ -10916,15 +10916,6 @@ void QWidget::setAttribute(Qt::WidgetAttribute attribute, bool on)
     Q_STATIC_ASSERT_X(sizeof(d->high_attributes)*8 >= (Qt::WA_AttributeCount - sizeof(uint)*8),
                       "QWidget::setAttribute(WidgetAttribute, bool): "
                       "QWidgetPrivate::high_attributes[] too small to contain all attributes in WidgetAttribute");
-#ifdef Q_OS_WIN
-    // ### Don't use PaintOnScreen+paintEngine() to do native painting in some future release
-    if (attribute == Qt::WA_PaintOnScreen && on && windowType() != Qt::Desktop && !inherits("QGLWidget")) {
-        // see ::paintEngine for details
-        paintEngine();
-        if (d->noPaintOnScreen)
-            return;
-    }
-#endif
 
     // Don't set WA_NativeWindow on platforms that don't support it -- except for QGLWidget, which depends on it
     if (attribute == Qt::WA_NativeWindow && !d->mustHaveWindowHandle) {
