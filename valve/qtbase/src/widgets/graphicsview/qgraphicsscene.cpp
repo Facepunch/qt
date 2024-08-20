@@ -1130,16 +1130,15 @@ QList<QGraphicsItem *> QGraphicsScenePrivate::itemsAtPosition(const QPoint &scre
     if (!view)
         return q->items(scenePos, Qt::IntersectsItemShape, Qt::DescendingOrder, QTransform());
 
-    const QRectF pointRect(QPointF(widget->mapFromGlobal(screenPos)), QSizeF(1, 1));
+    // Sol: we're testing a point so use the pixel intersection test in all cases (prev. would do rect tests?)
+
     if (!view->isTransformed())
-        return q->items(pointRect, Qt::IntersectsItemShape, Qt::DescendingOrder);
+        return q->items(widget->mapFromGlobal(screenPos), Qt::IntersectsItemShape,
+                        Qt::DescendingOrder);
 
     const QTransform viewTransform = view->viewportTransform();
-    if (viewTransform.type() <= QTransform::TxScale) {
-        return q->items(viewTransform.inverted().mapRect(pointRect), Qt::IntersectsItemShape,
-                        Qt::DescendingOrder, viewTransform);
-    }
-    return q->items(viewTransform.inverted().map(pointRect), Qt::IntersectsItemShape,
+    return q->items(viewTransform.inverted().map(widget->mapFromGlobal(screenPos)),
+                    Qt::IntersectsItemShape,
                     Qt::DescendingOrder, viewTransform);
 }
 

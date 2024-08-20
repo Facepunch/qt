@@ -2306,22 +2306,12 @@ QList<QGraphicsItem *> QGraphicsView::items(const QPoint &pos) const
     Q_D(const QGraphicsView);
     if (!d->scene)
         return QList<QGraphicsItem *>();
-    // ### Unify these two, and use the items(QPointF) version in
-    // QGraphicsScene instead. The scene items function could use the viewport
-    // transform to map the point to a rect/polygon.
-    if ((d->identityMatrix || d->matrix.type() <= QTransform::TxScale)) {
-        // Use the rect version
-        QTransform xinv = viewportTransform().inverted();
-        return d->scene->items(xinv.mapRect(QRectF(pos.x(), pos.y(), 1, 1)),
-                               Qt::IntersectsItemShape,
-                               Qt::DescendingOrder,
-                               viewportTransform());
-    }
-    // Use the polygon version
-    return d->scene->items(mapToScene(pos.x(), pos.y(), 1, 1),
-                           Qt::IntersectsItemShape,
-                           Qt::DescendingOrder,
-                           viewportTransform());
+
+    QTransform xinv = viewportTransform().inverted();
+    return d->scene->items(xinv.map(pos),
+                            Qt::IntersectsItemShape,
+                            Qt::DescendingOrder,
+                            viewportTransform());
 }
 
 /*!
