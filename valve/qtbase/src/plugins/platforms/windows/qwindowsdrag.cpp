@@ -429,7 +429,15 @@ QWindowsOleDropSource::GiveFeedback(DWORD dwEffect)
     const Qt::DropAction action = translateToQDragDropAction(dwEffect);
     m_drag->updateAction(action);
 
-    const qint64 currentCacheKey = m_drag->currentDrag()->dragCursor(action).cacheKey();
+    // Sol: seeing it's possible currentDrag has been deleted by the time the win32 callback into here is called
+    const QDrag *drag = m_drag->currentDrag();
+    if (!drag) {        
+        QWindowsDrag *windowsDrag = QWindowsDrag::instance();
+        windowsDrag->cancelDrag();
+        return ResultFromScode(DRAGDROP_S_USEDEFAULTCURSORS);
+    }
+
+    const qint64 currentCacheKey = drag->dragCursor(action).cacheKey();
     auto it = m_cursors.constFind(action);
     // If a custom drag cursor is set, check its cache key to detect changes.
     if (it == m_cursors.constEnd() || (currentCacheKey && currentCacheKey != it.value().cacheKey)) {
