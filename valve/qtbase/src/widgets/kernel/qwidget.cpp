@@ -10562,6 +10562,16 @@ void QWidgetPrivate::setParent_sys(QWidget *newparent, Qt::WindowFlags f)
                 q->windowHandle()->setParent(nullptr);
             }
         }
+        // facepunch - backport of the Qt 6 fix for QTBUG-122747 (qtbase c956eb8eddb1): when an
+        // alien widget is reparented, the QWindows of its created native descendants were left
+        // anchored to the old native parent window, leaving them orphaned and invisible.
+        // Recursively re-anchor them to the closest native window of the new parent chain.
+        else {
+            QWidget *parentWithWindow =
+                newparent ? (newparent->windowHandle() ? newparent : newparent->nativeParentWidget()) : nullptr;
+            reparentWidgetWindowChildren(parentWithWindow);
+        }
+        // end facepunch
     }
 
     if (!newparent) {
@@ -10619,6 +10629,48 @@ void QWidgetPrivate::setParent_sys(QWidget *newparent, Qt::WindowFlags f)
             topData()->initialScreenIndex = targetScreen;
     }
 }
+
+// facepunch - backport of the Qt 6 reparenting fix (QTBUG-122747, qtbase c956eb8eddb1
+// + windowFlags follow-up 6c036012b5f2), see setParent_sys
+void QWidgetPrivate::reparentWidgetWindows(QWidget *parentWithWindow, Qt::WindowFlags windowFlags)
+{
+    if (QWindow *window = windowHandle()) {
+        // Reparent this QWindow, and all QWindow children will follow
+        if (parentWithWindow) {
+            if (windowFlags & Qt::Window) {
+                // Top level windows can only have transient parents,
+                // and the transient parent must be another top level.
+                QWidget *topLevel = parentWithWindow->window();
+                auto *transientParent = topLevel->windowHandle();
+                Q_ASSERT(transientParent);
+                window->setTransientParent(transientParent);
+                window->setParent(nullptr);
+            } else {
+                auto *parentWindow = parentWithWindow->windowHandle();
+                window->setTransientParent(nullptr);
+                window->setParent(parentWindow);
+            }
+        } else {
+            window->setTransientParent(nullptr);
+            window->setParent(nullptr);
+        }
+    } else {
+        reparentWidgetWindowChildren(parentWithWindow);
+    }
+}
+
+void QWidgetPrivate::reparentWidgetWindowChildren(QWidget *parentWithWindow)
+{
+    for (auto *child : qAsConst(children)) {
+        if (auto *childWidget = qobject_cast<QWidget*>(child)) {
+            auto *childPrivate = QWidgetPrivate::get(childWidget);
+            // Child widgets with QWindows should always continue to be child
+            // windows, so we pass on the child's current window flags here.
+            childPrivate->reparentWidgetWindows(parentWithWindow, childWidget->windowFlags());
+        }
+    }
+}
+// end facepunch
 
 /*!
     Scrolls the widget including its children \a dx pixels to the
