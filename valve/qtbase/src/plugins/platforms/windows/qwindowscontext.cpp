@@ -1442,8 +1442,14 @@ bool QWindowsContext::windowsProc(HWND hwnd, UINT message,
         // so that the resize event sent from QGuiApplication incorporates it
         // WM_DPICHANGED is sent with a size that avoids resize loops (by
         // snapping back to the previous screen, see QTBUG-65580).
+        //
+        // QTBUG-70721: but when the DPI change is caused by our own setGeometry()
+        // call, Qt has already scaled the geometry for the new DPI. Applying Windows'
+        // suggested rect on top would scale it a second time, leaving windows restored
+        // onto a different-DPI monitor at the wrong size. So only honour the suggestion
+        // for spontaneous changes such as the user dragging the window to another screen.
         const bool doResize = resizeOnDpiChanged(platformWindow->window());
-        if (doResize) {
+        if (doResize && !platformWindow->testFlag(QWindowsWindow::WithinSetGeometry)) {
             platformWindow->setFlag(QWindowsWindow::WithinDpiChanged);
             platformWindow->updateFullFrameMargins();
             const auto prcNewWindow = reinterpret_cast<RECT *>(lParam);
