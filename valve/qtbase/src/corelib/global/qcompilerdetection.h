@@ -102,8 +102,14 @@
 #  endif
 #  define Q_DECL_EXPORT __declspec(dllexport)
 #  define Q_DECL_IMPORT __declspec(dllimport)
-#  define QT_MAKE_UNCHECKED_ARRAY_ITERATOR(x) stdext::make_unchecked_array_iterator(x) // Since _MSC_VER >= 1800
-#  define QT_MAKE_CHECKED_ARRAY_ITERATOR(x, N) stdext::make_checked_array_iterator(x, size_t(N)) // Since _MSC_VER >= 1500
+/* MSVC's STL removed stdext::make_checked_array_iterator and its unchecked counterpart in
+   VS 2022 17.10 (_MSC_VER 1940). Leaving these undefined on newer toolchains falls through
+   to the generic (x) definitions further down, which is what every non-MSVC compiler has
+   always used - the checked iterators only ever added MSVC debug-iterator validation. */
+#  if _MSC_VER < 1940
+#    define QT_MAKE_UNCHECKED_ARRAY_ITERATOR(x) stdext::make_unchecked_array_iterator(x) // Since _MSC_VER >= 1800
+#    define QT_MAKE_CHECKED_ARRAY_ITERATOR(x, N) stdext::make_checked_array_iterator(x, size_t(N)) // Since _MSC_VER >= 1500
+#  endif
 /* Intel C++ disguising as Visual C++: the `using' keyword avoids warnings */
 #  if defined(__INTEL_COMPILER)
 #    define Q_DECL_VARIABLE_DEPRECATED
