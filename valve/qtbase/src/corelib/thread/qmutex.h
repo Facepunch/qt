@@ -51,6 +51,9 @@
 
 class tst_QMutex;
 
+// s&box: GCC 11+ no longer pulls <limits> in transitively.
+#include <limits>
+
 QT_BEGIN_NAMESPACE
 
 

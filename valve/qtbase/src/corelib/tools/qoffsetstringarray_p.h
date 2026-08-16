@@ -56,6 +56,9 @@
 #include <tuple>
 #include <array>
 
+// s&box: GCC 11+ no longer pulls <limits> in transitively.
+#include <limits>
+
 QT_BEGIN_NAMESPACE
 
 namespace QtPrivate {
