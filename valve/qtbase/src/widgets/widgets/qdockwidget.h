@@ -102,10 +102,10 @@ public:
     //
     // garry: these aren't used anymore
     //
-#if QT_DEPRECATED_SINCE(5, 0)
+    // s&box: kept outside QT_DEPRECATED_SINCE - that evaluates false by default in 5.15,
+    // and qaccessiblewidgets.cpp still calls titleBarWidget() unconditionally.
     void setTitleBarWidget(QWidget *){}
     QWidget *titleBarWidget() const{ return nullptr; }
-#endif
 
     inline bool isAreaAllowed(Qt::DockWidgetArea area) const
     { return (allowedAreas() & area) == area; }
