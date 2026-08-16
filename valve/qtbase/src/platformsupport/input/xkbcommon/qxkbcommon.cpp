@@ -46,6 +46,22 @@
 #include <QtGui/private/qguiapplication_p.h>
 
 #include <qpa/qplatforminputcontext.h>
+
+// s&box: these four keysyms are absent from the libxkbcommon headers on current distros,
+// so define them from the standard X11 values when missing. Removing the entries instead
+// would silently drop dead key handling.
+#ifndef XKB_KEY_dead_lowline
+#define XKB_KEY_dead_lowline            0xfe90
+#endif
+#ifndef XKB_KEY_dead_aboveverticalline
+#define XKB_KEY_dead_aboveverticalline  0xfe91
+#endif
+#ifndef XKB_KEY_dead_belowverticalline
+#define XKB_KEY_dead_belowverticalline  0xfe92
+#endif
+#ifndef XKB_KEY_dead_longsolidusoverlay
+#define XKB_KEY_dead_longsolidusoverlay 0xfe93
+#endif
 #include <qpa/qplatformintegration.h>
 
 QT_BEGIN_NAMESPACE
