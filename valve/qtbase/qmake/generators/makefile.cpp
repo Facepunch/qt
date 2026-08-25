@@ -293,6 +293,12 @@ MakefileGenerator::setProjectFile(QMakeProject *p)
         else
         {
             objPath += "valve_memoverride.o";
+
+            // valve_memoverride calls dlsym, which glibc only folded into libc in 2.34. Older
+            // ones - the Steam Runtime is 2.31 - still keep it in libdl, so name whatever the
+            // mkspec calls the dynamic loader library. mac.conf leaves it empty, which is right
+            // there: dlsym lives in libSystem and there is no libdl to ask for.
+            projectFile()->values("LIBS") += project->values("QMAKE_LIBS_DYNLOAD");
         }
 
         // Now that we've finally got decent strings, add them to the project

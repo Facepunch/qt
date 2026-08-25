@@ -736,6 +736,8 @@ setBootstrapVariable()
         setBootstrapVariable QMAKE_CXXFLAGS_SPLIT_SECTIONS
         setBootstrapVariable QMAKE_LFLAGS
         setBootstrapVariable QMAKE_LFLAGS_GCSECTIONS
+        # valve_memoverride, which the generator links into everything, calls dlsym.
+        setBootstrapVariable QMAKE_LIBS_DYNLOAD
 
         if [ "$CFG_DEBUG" = "no" ] || [ "$CFG_RELEASE_TOOLS" = "yes" ]; then
             setBootstrapVariable QMAKE_CXXFLAGS_RELEASE
